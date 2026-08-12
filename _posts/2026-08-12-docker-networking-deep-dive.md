@@ -1,5 +1,5 @@
 ---
-title: "Docker Networking Deep Dive: How Containers Communicate — From Kernel Primitives to Production Patterns"
+title: "Docker Networking Deep Dive: How Containers Communicate"
 date: 2026-08-12 12:00:00 +0200
 categories: [DevOps, Docker]
 tags: [docker, networking, linux, containers, iptables]
