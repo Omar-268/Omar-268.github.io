@@ -5,6 +5,8 @@ categories: [DevOps, Docker]
 tags: [docker, networking, linux, containers, iptables]
 toc: true
 comments: true
+image:
+  path: /assets/docker_images/0.png
 ---
 
 ## 1. Introduction
