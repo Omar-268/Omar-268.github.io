@@ -47,30 +47,7 @@ Before we look at Docker commands, it is crucial to understand that "Docker netw
    Since containers have private IP addresses (like `172.17.x.x`), they cannot route to the internet directly. Docker dynamically configures Linux `iptables` with Network Address Translation (NAT) rules. Specifically, it uses Source NAT (SNAT or MASQUERADE) to allow outgoing traffic, and Destination NAT (DNAT) to route incoming traffic for published ports.
 
 Here is how these components fit together architecturally:
-
-```text
-+-------------------------------------------------------------+
-|                         Ubuntu Host                         |
-|                                                             |
-|   +-------------------+              +------------------+   |
-|   | Container A (NS)  |              | Container B (NS) |   |
-|   |                   |              |                  |   |
-|   |     [ eth0 ]      |              |     [ eth0 ]     |   |
-|   +--------|----------+              +---------|--------+   |
-|            |                                   |            |
-|            | (veth pair)                       |            |
-|            |                                   |            |
-|       [ vethX ]                           [ vethY ]         |
-|            |                                   |            |
-|    ========+======[ docker0 bridge ]===========+========    |
-|                           |                                 |
-|                     [ iptables NAT ]                        |
-|                           |                                 |
-|                       [ ens33 ]                             |
-+---------------------------|---------------------------------+
-                            |
-                       ( Internet )
-```
+![Docker](./assets/docker_images/1.png)
 
 > **Key Insight:** Containers aren't virtual machines with emulated hardware. They are isolated processes utilizing dedicated network namespaces wired to the host via virtual ethernet cables and software switches.
 
@@ -338,35 +315,7 @@ HTTP/1.1 200 OK
 
 This confirms that the container has outbound internet connectivity. The request leaves the container through the Docker bridge and reaches the external network through the host.
 
-```text
-+---------------------------------------------------------------------+
-|                     Ubuntu Host (client01)                          |
-|                                                                      |
-|                    +---------------------------+                    |
-|                    |   Container: web1 (netns)  |                    |
-|                    |                            |                    |
-|                    |         [ eth0 ]           |                    |
-|                    |     172.17.0.2/16          |                    |
-|                    +-------------|---------------+                    |
-|                                  |                                   |
-|                                  | (veth pair - virtual cable)       |
-|                                  |                                   |
-|                          [ veth27df88e ]                             |
-|                        (host side, index 4)                          |
-|                                  |                                   |
-|         ===========[ docker0 bridge - 172.17.0.1/16 ]============    |
-|                                  |                                   |
-|                        [ iptables NAT table ]                        |
-|                     MASQUERADE 172.17.0.0/16 -> host IP              |
-|                     DOCKER chain (DNAT for -p ports)                 |
-|                                  |                                   |
-|                            [ ens33 ]                                 |
-|                      192.168.106.137/24                              |
-+----------------------------------|-----------------------------------+
-                                    |
-                              ( Internet )
-                          e.g. example.com
-```
+![Docker](./assets/docker_images/2.png)
 
 **Summary:** Before any container runs, the host already has docker0 (a Linux bridge at 172.17.0.1/16 in DOWN state) and a MASQUERADE iptables rule ready for 172.17.0.0/16. When we launched an Nginx container, Docker created a new network namespace for it, assigned it IP 172.17.0.2 from the bridge subnet, and connected it to docker0 via a veth pair (veth27df88e on the host side, eth0 inside the container). We proved this connection using nsenter to enter the container's namespace and match the interface index (eth0@if4 maps to host index 4, which is veth27df88e). The container successfully reached the internet because the MASQUERADE rule rewrote its private source IP (172.17.0.2) to the host's own outbound address on egress traffic. Re-running iptables -t nat -L -n -v after the curl request would show the MASQUERADE rule's packet counters incrementing from their earlier value of 0, confirming the translation was actually applied.
 
@@ -643,21 +592,7 @@ This perfectly explains the veth-to-bridge mapping:
 
 Here is the exact topology mapping on the host:
 
-```text
-              Ubuntu Host
-                   │
-      ┌────────────┴────────────┐
-      │                         │
-  docker0                 br-c31058550d56
- 172.17.0.1                172.18.0.1
-      │                         │
-      │                    app-network
-      │                    ┌─────┴─────┐
-      │                    │           │
-  outsider              frontend    backend
-172.17.0.2             172.18.0.2  172.18.0.3
-```
-
+![Docker](./assets/docker_images/3.png)
 
 > **Key Insight:** `docker network create` provisions an entirely separate Linux bridge. It's not just a metadata label inside Docker - it's a physically isolated virtual switch in the kernel.
 
@@ -783,19 +718,7 @@ The native host service is indeed running.
 
 
 Host mode:
-```text
-Host Network Namespace
-┌──────────────────────────────┐
-│                              │
-│ ens33                        │
-│                              │
-│ :80  ← host nginx (already) │
-│                              │
-│      Docker container        │
-│      nginx → tries :80       │
-│                              │
-└──────────────────────────────┘
-```
+![Docker](./assets/docker_images/4.png)
 
 
 
