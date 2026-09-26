@@ -311,7 +311,7 @@ Proxmox supports two types of containers, and understanding the difference is im
 
 > **Warning:** Always prefer **unprivileged containers** unless you have a compelling reason otherwise. A container escape from a privileged container gives the attacker full root access to the host.
 
-### 5.4 Download a CT Template
+### 5.3 Download a CT Template
 
 Unlike VMs that boot from ISO images, containers are created from pre-built **templates** — compressed root filesystems of various Linux distributions. Proxmox provides an online repository with templates for Ubuntu, Debian, Alpine, CentOS, Fedora, Arch Linux, and more.
 
@@ -335,7 +335,7 @@ The template list includes a wide variety of distributions:
 
 ![Download CT Template](./assets/proxmox_images/Screenshot_18.png)
 
-### 5.5 Create the Container
+### 5.4 Create the Container
 
 Click the **Create CT** button in the top-right corner of the dashboard. The container creation wizard walks you through several tabs:
 
