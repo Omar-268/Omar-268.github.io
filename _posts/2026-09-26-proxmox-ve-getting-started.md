@@ -6,7 +6,7 @@ tags: [proxmox, virtualization, homelab, linux, vm, container, lxc, kvm]
 toc: true
 comments: true
 image:
-  path: /assets/proxmox_images/Screenshot_8.png
+  path: /assets/proxmox_images/0
 ---
 
 ## 1. Introduction
