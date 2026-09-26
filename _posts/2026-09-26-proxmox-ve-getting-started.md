@@ -59,6 +59,7 @@ In this guide, we will walk through the complete getting-started workflow:
 - **Creating your first Virtual Machine** from an uploaded ISO image
 - **Creating your first Container** from a downloaded template
 
+
 **Prerequisites:**
 - A dedicated machine or VMware/VirtualBox VM with at least 4 GB RAM, 2 CPU cores, and 40 GB storage
 - A USB flash drive (for bare-metal installs)
