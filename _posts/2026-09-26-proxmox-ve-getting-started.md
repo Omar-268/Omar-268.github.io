@@ -344,8 +344,6 @@ Click the **Create CT** button in the top-right corner of the dashboard. The con
 - **CT ID:** An auto-assigned numeric ID (e.g., `101`). You can change it.
 - **Hostname:** Give the container a descriptive name.
 - **Password:** Set the root password for the container.
-- **Unprivileged container:** ✅ Leave checked (recommended, as explained above).
-- **Nesting:** ✅ Check this if you plan to run Docker inside the container.
 - **SSH public key(s):** Optionally paste your public key for passwordless SSH access.
 
 ![Create CT — General Tab](./assets/proxmox_images/Screenshot_19.png)
