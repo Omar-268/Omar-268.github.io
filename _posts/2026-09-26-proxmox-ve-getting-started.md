@@ -15,7 +15,7 @@ image:
 
 Proxmox Virtual Environment is a complete, open-source server management platform for enterprise virtualization. It tightly integrates the KVM hypervisor and Linux Containers (LXC), software-defined storage and networking functionality, on a single platform. With the integrated web-based user interface you can manage VMs and containers, high availability for clusters, or the integrated disaster recovery tools with ease.
 
-- **KVM (Kernel-based Virtual Machine)** : A Type 1 hypervisor built directly into the Linux kernel. KVM turns your Linux server into a full hypervisor, allowing you to run completely isolated virtual machines, each with its own virtual CPU, RAM, disk, and network interfaces. Because KVM is part of the kernel itself, it delivers near-native performance without the overhead of a separate hypervisor layer.
+- **KVM (Kernel-based Virtual Machine)** : A hypervisor built directly into the Linux kernel. KVM turns your Linux server into a full hypervisor, allowing you to run completely isolated virtual machines, each with its own virtual CPU, RAM, disk, and network interfaces. Because KVM is part of the kernel itself, it delivers near-native performance without the overhead of a separate hypervisor layer.
 
 - **LXC (Linux Containers)**: An OS-level virtualization technology that allows you to run multiple isolated Linux systems (containers) on a single host. 
 
@@ -26,13 +26,11 @@ What makes Proxmox VE special is that it brings both of these technologies under
 
 1. **Truly Free**: Unlike VMware, there is no feature-gating behind paid licenses. Clustering, live migration, backups, ZFS, Ceph. everything is available for free. An optional enterprise subscription provides access to the stable repository and professional support, but it is not required.
 
-2. **Two Virtualization Technologies in One**: Need a full Windows VM? Use KVM. Need a quick Linux web server? Spin up an LXC container in 2 seconds. Both are managed from the same interface.
+2. **Enterprise Storage Built-in**: Proxmox natively supports ZFS (with snapshots, compression, and replication) and Ceph (distributed storage) right out of the box — no add-ons needed.
 
-3. **Enterprise Storage Built-in**: Proxmox natively supports ZFS (with snapshots, compression, and replication) and Ceph (distributed storage) right out of the box — no add-ons needed.
+3. **Powerful Backup System**: The integrated backup system supports full, differential, and snapshot-based backups. Pair it with **Proxmox Backup Server** for deduplication, encryption, and incremental backups.
 
-4. **Powerful Backup System**: The integrated backup system supports full, differential, and snapshot-based backups. Pair it with **Proxmox Backup Server** for deduplication, encryption, and incremental backups.
-
-5. **Active Community** : Proxmox has a massive community, especially in the homelab space. Forums, subreddits, YouTube tutorials, and helper scripts (like the popular Proxmox VE Helper Scripts) make getting started easy.
+4. **Active Community** : Proxmox has a massive community, especially in the homelab space. Forums, subreddits, YouTube tutorials, and helper scripts (like the popular Proxmox VE Helper Scripts) make getting started easy.
 
 ### 1.2 Key Features 
 
@@ -43,7 +41,6 @@ What makes Proxmox VE special is that it brings both of these technologies under
 - **Live migration** : Move running VMs between nodes with zero downtime
 - **ZFS integration** : Enterprise-grade filesystem with snapshots, compression, and replication
 - **Ceph storage** : Built-in distributed storage for hyper-converged setups
-- **Software-Defined Networking (SDN)** : VLANs, VXLANs, and EVPN support
 - **Firewall** : Per-datacenter, per-node, per-VM, and per-container firewall rules
 - **Scheduled backups** : Automated backup jobs with retention policies
 - **Two-Factor Authentication** : TOTP, YubiKey, and WebAuthn support
@@ -62,7 +59,6 @@ In this guide, we will walk through the complete getting-started workflow:
 
 **Prerequisites:**
 - A dedicated machine or VMware/VirtualBox VM with at least 4 GB RAM, 2 CPU cores, and 40 GB storage
-- A USB flash drive (for bare-metal installs)
 - The Proxmox VE ISO image downloaded from [proxmox.com/downloads](https://www.proxmox.com/en/downloads)
 - Basic familiarity with networking concepts (IP addresses, gateways)
 
@@ -285,7 +281,7 @@ After the OS installation is complete and the VM has been running for a while, y
 
 ### 5.1 What are LXC Containers?
 
-Linux Containers (LXC) in Proxmox VE are a fundamentally different approach to virtualization compared to KVM virtual machines. While a VM emulates an entire computer — complete with virtual CPU, BIOS, disk controllers, and network cards — an LXC container is simply an **isolated group of processes** running on the host's own Linux kernel.
+Linux Containers (LXC) in Proxmox VE are a fundamentally different approach to virtualization compared to KVM virtual machines. While a VM emulates an entire computer complete with virtual CPU, BIOS, disk controllers, and network cards, an LXC container is simply an **isolated group of processes** running on the host's own Linux kernel.
 
 LXC achieves isolation using two core Linux kernel features:
 
@@ -295,26 +291,10 @@ LXC achieves isolation using two core Linux kernel features:
 
 The result is that containers provide **near-native performance** with **minimal overhead**. 
 
+### 5.2 Download a CT Template
 
-### 5.2 Privileged vs. Unprivileged Containers
-
-Proxmox supports two types of containers, and understanding the difference is important for security:
-
-**Unprivileged Containers (Recommended):**
-- The container's root user (UID 0) is **mapped to a high, non-root UID** on the host (e.g., UID 100000).
-- Even if an attacker breaks out of the container, they land on the host as an unprivileged user with no special permissions.
-- This is the **default** in Proxmox and should be used unless you have a specific reason not to.
-
-**Privileged Containers:**
-- The container's root user (UID 0) maps directly to the **host's root** (UID 0).
-- Provides more compatibility (some older applications may need it) but is a security risk.
-- Only use if unprivileged mode causes compatibility issues, and you understand the implications.
-
-> **Warning:** Always prefer **unprivileged containers** unless you have a compelling reason otherwise. A container escape from a privileged container gives the attacker full root access to the host.
-
-### 5.3 Download a CT Template
-
-Unlike VMs that boot from ISO images, containers are created from pre-built **templates** — compressed root filesystems of various Linux distributions. Proxmox provides an online repository with templates for Ubuntu, Debian, Alpine, CentOS, Fedora, Arch Linux, and more.
+Unlike VMs that boot from ISO images, containers are created from pre-built **templates** compressed root filesystems of various Linux distributions. Proxmox provides an online repository with templates for Ubuntu, Debian, Alpine, CentOS, Fedora, Arch Linux, and more.
+You can either download an official template from the Proxmox repository or upload your own custom CT template.
 
 Here is how to download one:
 
@@ -333,6 +313,8 @@ The template list includes a wide variety of distributions:
 | **Alpine 3.23** | `alpine-3.23-default` | Ultra-minimal (~5 MB), great for microservices |
 | **Fedora 44** | `fedora-44-default` | Latest packages, SELinux support |
 | **Arch Linux** | `archlinux-base` | Rolling release |
+
+
 
 ![Download CT Template](./assets/proxmox_images/Screenshot_18.png)
 
