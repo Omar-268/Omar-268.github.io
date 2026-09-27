@@ -1,5 +1,5 @@
 ---
-title: "Getting Started with Proxmox VE: Installation, Dashboard & Your First VM and CT"
+title: "Getting Started with Proxmox VE"
 date: 2026-09-25 18:00:00 +0300
 categories: [Homelab, Virtualization]
 tags: [proxmox, virtualization, homelab, linux, vm, container, lxc, kvm]
